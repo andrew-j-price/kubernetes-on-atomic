@@ -1,0 +1,20 @@
+---
+
+- name: Debug dictionary
+  debug:
+    msg: "{{ item }}"
+  with_dict: "{{ dict_k8s }}"
+  run_once: true
+
+- name: Copy etcd template
+  template:
+    src: etcd.conf.j2
+    dest: "/etc/etcd/etcd.conf"
+  notify:
+    - restart etcd
+
+- name: Enable and start etcd service
+  service:
+     name: etcd
+     state: started
+     enabled: yes

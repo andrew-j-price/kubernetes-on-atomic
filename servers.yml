@@ -1,0 +1,17 @@
+---
+
+- name: atomic01
+  box: centos/atomic-host
+  cpus: 1
+  ram: 1536
+  ip: 192.168.56.91
+- name: atomic02
+  box: centos/atomic-host
+  cpus: 1
+  ram: 1536
+  ip: 192.168.56.92
+- name: atomic03
+  box: centos/atomic-host
+  cpus: 1
+  ram: 1536
+  ip: 192.168.56.93

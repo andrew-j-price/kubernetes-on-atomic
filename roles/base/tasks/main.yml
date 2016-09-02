@@ -1,0 +1,30 @@
+---
+
+- name: Set selinux
+  selinux:
+    policy: targeted
+    state: enforcing
+
+- name: Disable ipv6
+  shell: sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.disable_ipv6=1
+
+- name: Set timezone to etc/utc
+  file:
+    src: /usr/share/zoneinfo/Etc/UTC
+    dest: /etc/localtime
+    state: link
+    force: yes
+
+- name: Configure hosts file
+  template: 
+    src: hosts.j2
+    dest: /etc/hosts
+    mode: 0644
+
+- name: Add nameservers to resolv.conf
+  lineinfile: >
+    dest=/etc/resolv.conf
+    line="nameserver {{ item }}"
+    regexp="^nameserver {{ item }}"
+    state=present
+  with_items: "{{ dns_nameservers }}"

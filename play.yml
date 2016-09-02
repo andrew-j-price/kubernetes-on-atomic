@@ -1,0 +1,33 @@
+---
+
+- name: Deploy base configurations to mgmt node
+  hosts: mgmt
+  become: true
+  become_user: root
+  gather_facts: true
+  vars_files:
+    - "group_vars/{{ group_name }}.yml"  
+  roles:
+    - base
+
+- name: Deploy base configurations to k8s nodes
+  hosts: k8s
+  become: true
+  become_user: root
+  gather_facts: true
+  vars_files:
+    - "group_vars/{{ group_name }}.yml"  
+  roles:
+    - base
+
+- name: Configure k8s cluster
+  hosts: k8s
+  become: true
+  become_user: root
+  gather_facts: true
+  vars_files:
+    - "group_vars/{{ group_name }}.yml"  
+  roles:
+    - { role: etcd, tags: ['etcd'] }
+    - { role: flannel, tags: ['flannel'] }
+    - { role: kubernetes, tags: ['kubernetes'] }

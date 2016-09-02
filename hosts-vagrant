@@ -1,0 +1,16 @@
+[everyone:children]
+mgmt
+k8s
+
+[everyone:vars]
+group_name=vagrant
+ansible_ssh_user=vagrant
+ansible_ssh_pass=vagrant
+
+[mgmt]
+nucleus       ansible_connection=local
+
+[k8s]
+atomic01
+atomic02
+atomic03

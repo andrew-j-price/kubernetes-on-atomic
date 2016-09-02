@@ -1,0 +1,75 @@
+---
+
+- name: Configure kubernetes master
+  lineinfile:
+    dest: "{{ item.dest }}"
+    line: "{{ item.line }}"
+    regexp: "{{ item.regexp }}"
+  with_items:
+    - info:
+      dest: '/etc/kubernetes/config'
+      line: 'KUBE_MASTER="--master=http://atomic01:8080"'
+      regexp: 'KUBE_MASTER'
+    - info:
+      dest: '/etc/kubernetes/apiserver'
+      line: 'KUBE_API_ADDRESS="--address=0.0.0.0"'
+      regexp: 'KUBE_API_ADDRESS'
+    - info:
+      dest: '/etc/kubernetes/apiserver'
+      line: 'KUBE_ETCD_SERVERS="--etcd-servers=http://{{ dict_k8s.one.name }}:2379,http://{{ dict_k8s.two.name }}:2379,http://{{ dict_k8s.three.name }}:2379"'
+      regexp: 'KUBE_ETCD_SERVERS'
+    - info:
+      dest: '/etc/kubernetes/apiserver'
+      line: 'KUBE_ADMISSION_CONTROL="--admission-control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ResourceQuota"'
+      regexp: 'KUBE_ADMISSION_CONTROL'
+  notify:
+    - restart kube-apiserver
+    - restart kube-controller-manager
+    - restart kube-scheduler
+  when: "'01' in inventory_hostname"
+
+- name: Configure kubernetes workers nodes
+  lineinfile:
+    dest: "{{ item.dest }}"
+    line: "{{ item.line }}"
+    regexp: "{{ item.regexp }}"
+  with_items:
+    - info:
+      dest: '/etc/kubernetes/config'
+      line: 'KUBE_MASTER="--master=http://atomic01:8080"'
+      regexp: 'KUBE_MASTER'
+    - info:
+      dest: '/etc/kubernetes/kubelet'
+      line: 'KUBELET_ADDRESS="--address=0.0.0.0"'
+      regexp: 'KUBELET_ADDRESS'
+    - info:
+      dest: '/etc/kubernetes/kubelet'
+      line: '# KUBELET_HOSTNAME=""'
+      regexp: 'KUBELET_HOSTNAME'
+    - info:
+      dest: '/etc/kubernetes/kubelet'
+      line: 'KUBELET_API_SERVER="--api-servers=http://haproxy:8080"'
+      regexp: 'KUBELET_API_SERVER'
+  notify:
+    - restart kubelet
+    - restart kube-proxy
+
+- name: Ensure services are started and enabled on master node
+  service:
+    name: '{{ item }}'
+    enabled: yes
+    state: started
+  with_items:
+    - 'kube-apiserver'
+    - 'kube-controller-manager'
+    - 'kube-scheduler'
+  when: "'01' in inventory_hostname"
+
+- name: Ensure services are started and enabled on worker nodes
+  service:
+    name: '{{ item }}'
+    enabled: yes
+    state: started
+  with_items:
+    - 'kubelet'
+    - 'kube-proxy'
