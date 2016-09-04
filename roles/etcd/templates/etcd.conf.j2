@@ -13,7 +13,7 @@ ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379"
 #
 #[cluster]
 ETCD_INITIAL_ADVERTISE_PEER_URLS="http://{{ inventory_hostname }}:2380"
-ETCD_INITIAL_CLUSTER="{{ dict_k8s.one.name }}=http://{{ dict_k8s.one.name }}:2380,{{ dict_k8s.two.name }}=http://{{ dict_k8s.two.name }}:2380,{{ dict_k8s.three.name }}=http://{{ dict_k8s.three.name }}:2380"
+ETCD_INITIAL_CLUSTER="{{ k8s_dict.instances[0].name }}=http://{{ k8s_dict.instances[0].name }}:2380,{{ k8s_dict.instances[1].name }}=http://{{ k8s_dict.instances[1].name }}:2380,{{ k8s_dict.instances[2].name }}=http://{{ k8s_dict.instances[2].name }}:2380"
 ETCD_INITIAL_CLUSTER_STATE="new"
 ETCD_INITIAL_CLUSTER_TOKEN="k8s-etcd-cluster"
 ETCD_ADVERTISE_CLIENT_URLS="http://{{ inventory_hostname }}:2379"

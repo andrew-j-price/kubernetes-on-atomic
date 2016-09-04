@@ -1,0 +1,8 @@
+---
+
+auth_path: '/etc/kubernetes/auth'
+auth_password_file: '{{ auth_path }}/auth-password.csv'
+auth_token_file: '{{ auth_path }}/auth-token.csv'
+
+ssl_path: '/etc/kubernetes/ssl'
+ssl_openssl_cnf_file: '{{ ssl_path }}/openssl.cnf'

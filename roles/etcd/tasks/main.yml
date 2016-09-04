@@ -1,11 +1,5 @@
 ---
 
-- name: Debug dictionary
-  debug:
-    msg: "{{ item }}"
-  with_dict: "{{ dict_k8s }}"
-  run_once: true
-
 - name: Copy etcd template
   template:
     src: etcd.conf.j2

@@ -34,13 +34,14 @@ end
 
 $keys = <<SCRIPT
   sudo mkdir /root/.ssh/
-  sudo cp /vagrant/authorized_keys /root/.ssh/authorized_keys
+  sudo cp /var/home/vagrant/sync/authorized_keys /root/.ssh/authorized_keys
+  cat /var/home/vagrant/sync/authorized_keys >> /home/vagrant/.ssh/authorized_keys
 SCRIPT
 
 $deploy = <<SCRIPT
-  cat /vagrant/authorized_keys >> /home/vagrant/.ssh/authorized_keys
   sudo mkdir /root/.ssh/
   sudo cp /vagrant/authorized_keys /root/.ssh/authorized_keys
+  cat /vagrant/authorized_keys >> /home/vagrant/.ssh/authorized_keys
   sudo yum -y install epel-release
   sudo yum -y update
   sudo yum -y install ansible

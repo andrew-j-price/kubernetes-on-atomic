@@ -10,7 +10,7 @@ My hopes and dreams here are:
   - Configure a resilient three node Vagrant cluster leveraging Project Atomic
 
 
-### Helpful Commands
+### Helpful Commands and Tests
 Provision:
 ```sh
 vagrant up
@@ -53,4 +53,18 @@ kubectl get --all-namespaces=true pods -o wide
 kubectl get --all-namespaces=true services
 kubectl get --all-namespaces=true replicationControllers
 kubectl get --all-namespaces=true deployments
+```
+
+k8s authentication:
+```sh
+curl https://127.0.0.1/version --cacert /etc/kubernetes/ssl/ca.pem --user admin:admin
+curl https://127.0.0.1/version --cacert /etc/kubernetes/ssl/ca.pem -H "Authorization: Bearer MySuperSecureToken"
+```
+
+ssl:
+```sh
+openssl s_client -connect 127.0.0.1:443 2>/dev/null </dev/null | openssl x509 -text | egrep -e CN= -e DNS: -e 'Not (Before|After)'
+openssl x509 -in /etc/kubernetes/ssl/ca.pem -text -noout | egrep -e CN= -e DNS: -e 'Not (Before|After)'
+openssl x509 -in /etc/kubernetes/ssl/apiserver.pem -text -noout | egrep -e CN= -e DNS: -e 'Not (Before|After)'
+openssl x509 -in /etc/kubernetes/ssl/admin.pem -text -noout | egrep -e CN= -e DNS: -e 'Not (Before|After)'
 ```

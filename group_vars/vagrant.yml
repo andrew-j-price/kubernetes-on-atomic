@@ -1,14 +1,12 @@
 ---
 
-dict_k8s:
-  one:
-    name: atomic01
+k8s_dict:
+  instances:
+  - name: atomic01
     ip: 192.168.56.91
-  two:
-    name: atomic02
+  - name: atomic02
     ip: 192.168.56.92
-  three:
-    name: atomic03
+  - name: atomic03
     ip: 192.168.56.93
 
 mgmt_nodes:
@@ -16,7 +14,7 @@ mgmt_nodes:
     ip: 192.168.56.90
 
 lb_name: haproxy
-lb_ip: 192.168.56.91
+lb_ip: 192.168.56.90
 
 flannel_name: 'vagrant'
 flannel_internal_network: 172.16.0.0

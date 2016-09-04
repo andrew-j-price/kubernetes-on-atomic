@@ -8,9 +8,9 @@
 {% endif %}
 
 # Kubernetes nodes
-{{ dict_k8s.one.ip }} {{ dict_k8s.one.name }}
-{{ dict_k8s.two.ip }} {{ dict_k8s.two.name }}
-{{ dict_k8s.three.ip }} {{ dict_k8s.three.name }}
+{{ k8s_dict.instances[0].ip }} {{ k8s_dict.instances[0].name }}
+{{ k8s_dict.instances[1].ip }} {{ k8s_dict.instances[1].name }}
+{{ k8s_dict.instances[2].ip }} {{ k8s_dict.instances[2].name }}
 
 {% if mgmt_nodes is defined and mgmt_nodes|length > 0 %}
 # Management nodes
