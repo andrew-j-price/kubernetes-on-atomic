@@ -9,7 +9,7 @@
 - name: Set selinux
   selinux:
     policy: targeted
-    state: enforcing
+    state: permissive
   ignore_errors: true
 
 - name: Disable ipv6

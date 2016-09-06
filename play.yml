@@ -8,7 +8,7 @@
   vars_files:
     - "group_vars/{{ group_name }}.yml"  
   roles:
-    - base
+    - { role: base, tags: ['base'] }
 
 - name: Deploy base configurations to k8s nodes
   hosts: k8s
@@ -18,7 +18,7 @@
   vars_files:
     - "group_vars/{{ group_name }}.yml"  
   roles:
-    - base
+    - { role: base, tags: ['base'] }
 
 - name: Configure k8s cluster
   hosts: k8s
@@ -30,4 +30,6 @@
   roles:
     - { role: etcd, tags: ['etcd'] }
     - { role: flannel, tags: ['flannel'] }
-    - { role: kubernetes, tags: ['kubernetes'] }
+    - { role: kubernetes, tags: ['kubernetes','k8s'] }
+    - { role: kubectl, tags: ['kubectl'] }
+    - { role: skydns, tags: ['skydns','dns'] }

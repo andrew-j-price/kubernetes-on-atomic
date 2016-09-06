@@ -1,0 +1,10 @@
+#!/bin/bash
+docker_name={{ kube2sky_name }}
+
+docker stop $docker_name
+docker rm $docker_name
+
+docker run -d --name=$docker_name --net=host --restart=always \
+gcr.io/google_containers/kube2sky:1.12 \
+-v=10 -logtostderr=true -domain=kubernetes.local \
+-etcd-server="http://127.0.0.1:2379"

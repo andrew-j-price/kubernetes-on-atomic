@@ -130,6 +130,10 @@
       dest: '/etc/kubernetes/kubelet'
       line: 'KUBELET_API_SERVER="--api-servers=http://{{ k8s_dict.instances[0].name }}:8080"'
       regexp: 'KUBELET_API_SERVER'
+    - info:
+      dest: '/etc/kubernetes/kubelet'
+      line: 'KUBELET_ARGS="--cluster_dns={{ k8s_dict.instances[0].ip }} --cluster_domain=kubernetes.local"'
+      regexp: 'KUBELET_ARGS'
   notify:
     - restart kubelet
     - restart kube-proxy

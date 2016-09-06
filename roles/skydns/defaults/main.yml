@@ -1,0 +1,12 @@
+---
+
+manifests_path: '/etc/kubernetes/manifests'
+
+kube2sky_name: 'kube2sky'
+kube2sky_file: 'kube2sky.sh'
+
+skydns_name: 'skydns'
+skydns_file: 'skydns.sh'
+
+busybox_pod_file: 'busybox.yaml'
+busybox_file: busybox.sh

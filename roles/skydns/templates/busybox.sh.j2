@@ -1,0 +1,13 @@
+#!/bin/bash
+kubectl describe pod busybox
+
+if [ $? -eq 0 ]
+then
+    echo "recreating"
+    kubectl delete pod busybox
+    sleep 40
+    kubectl create -f {{ busybox_pod_file }}
+else
+    echo "creating"
+    kubectl create -f {{ busybox_pod_file }}
+fi

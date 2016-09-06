@@ -22,3 +22,6 @@ flannel_network_prefix: 16
 flannel_subnet_length: 24
 
 internal_iface: 'enp0s8'
+
+kubectl_username: 'admin'
+kubectl_password: 'admin'

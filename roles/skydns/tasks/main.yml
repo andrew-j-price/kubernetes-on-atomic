@@ -1,0 +1,46 @@
+---
+
+- name: Create directory structure
+  file:
+    path: '{{ item }}'
+    owner: root
+    group: root
+    state: directory
+    mode: 0755
+  with_items:
+    - '{{ manifests_path }}'
+  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
+
+- name: Copy files
+  copy:
+    src: '{{ item }}'
+    dest: '{{ manifests_path }}/{{ item }}'
+    owner: root
+    group: root
+    mode: 0664
+  with_items:
+    - '{{ busybox_pod_file }}'
+  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
+
+- name: Copy templates
+  template:
+    src: '{{ item }}.j2'
+    dest: '{{ manifests_path }}/{{ item }}'
+    owner: root
+    group: root
+    mode: 0774
+  with_items:
+    - '{{ kube2sky_file }}'
+    - '{{ skydns_file }}'
+    - '{{ busybox_file }}'
+  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
+
+- name: Run commands
+  command: '{{ item }}'
+  with_items:
+    - '{{ manifests_path }}/{{ kube2sky_file }}'
+    - '{{ manifests_path }}/{{ skydns_file }}'
+    - '{{ manifests_path }}/{{ busybox_file }}'
+  args:
+    chdir: '{{ manifests_path }}'
+  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"

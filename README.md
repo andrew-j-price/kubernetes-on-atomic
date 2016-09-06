@@ -61,6 +61,14 @@ curl https://127.0.0.1/version --cacert /etc/kubernetes/ssl/ca.pem --user admin:
 curl https://127.0.0.1/version --cacert /etc/kubernetes/ssl/ca.pem -H "Authorization: Bearer MySuperSecureToken"
 ```
 
+skydns:
+```sh
+kubectl exec busybox -- nslookup kubernetes
+docker logs skydns
+docker logs kube2sky
+docker search gcr.io/google-containers/kube
+```
+
 ssl:
 ```sh
 openssl s_client -connect 127.0.0.1:443 2>/dev/null </dev/null | openssl x509 -text | egrep -e CN= -e DNS: -e 'Not (Before|After)'
