@@ -1,4 +1,3 @@
 ---
 
 ssl_path: '/etc/kubernetes/ssl'
-kubectl_path: '/etc/kubernetes/kubectl'

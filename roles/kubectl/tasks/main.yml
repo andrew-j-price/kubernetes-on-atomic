@@ -9,9 +9,6 @@
     mode: 0755
   with_items:
     - '{{ ssl_path }}'
-    - '{{ kubectl_path }}'
-  when: ('{{ k8s_dict.instances[1].name }}' == inventory_hostname) or
-        ('{{ k8s_dict.instances[2].name }}' == inventory_hostname)
 
 - name: Fetch previously generated certificates
   fetch:
@@ -38,12 +35,20 @@
   when: ('{{ k8s_dict.instances[1].name }}' == inventory_hostname) or
         ('{{ k8s_dict.instances[2].name }}' == inventory_hostname)
 
+- name: Copy ca.pem for trust
+  copy:
+    src: '/tmp/ca.pem'
+    dest: /etc/pki/ca-trust/source/anchors/ca.pem
+  register: ca_copy
+
+- name: Update trusted CAs
+  command: 'update-ca-trust extract'
+  when: ca_copy.changed
+
 - name: Configure kubectl
   command: "{{ item }}"
   with_items:
-    - 'kubectl config set-cluster default-cluster --server=https://{{ k8s_dict.instances[0].name }} --certificate-authority={{ ssl_path }}/ca.pem'
-    - 'kubectl config set-credentials default-admin --username={{ kubectl_username }} --password={{ kubectl_password }} --certificate-authority={{ ssl_path }}/ca.pem'
+    - 'kubectl config set-cluster default-cluster --server=https://{{ k8s_dict.instances[0].name }}'
+    - 'kubectl config set-credentials default-admin --username={{ kubectl_username }} --password={{ kubectl_password }}'
     - 'kubectl config set-context default-system --cluster=default-cluster --user=default-admin'
     - 'kubectl config use-context default-system'
-  when: ('{{ k8s_dict.instances[1].name }}' == inventory_hostname) or
-        ('{{ k8s_dict.instances[2].name }}' == inventory_hostname)

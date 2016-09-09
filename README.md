@@ -57,13 +57,26 @@ kubectl get --all-namespaces=true deployments
 
 k8s authentication:
 ```sh
+kubectl config view
 curl https://127.0.0.1/version --cacert /etc/kubernetes/ssl/ca.pem --user admin:admin
 curl https://127.0.0.1/version --cacert /etc/kubernetes/ssl/ca.pem -H "Authorization: Bearer MySuperSecureToken"
+```
+
+dashboard:
+```sh
+https://atomic01/ui
+kubectl --namespace=kube-system get pods -o wide
+kubectl --namespace=kube-system logs 
+kubectl --namespace=kube-system get svc kubernetes-dashboard
+kubectl --namespace=kube-system get rc kubernetes-dashboard
+docker run --net=host --rm -it gcr.io/google_containers/kubernetes-dashboard-amd64:v1.4.0-beta2 --apiserver-host http://localhost:8080
+http://atomic01:9090
 ```
 
 skydns:
 ```sh
 kubectl exec busybox -- nslookup kubernetes
+kubectl exec -it busybox /bin/sh
 docker logs skydns
 docker logs kube2sky
 docker search gcr.io/google-containers/kube
@@ -75,4 +88,12 @@ openssl s_client -connect 127.0.0.1:443 2>/dev/null </dev/null | openssl x509 -t
 openssl x509 -in /etc/kubernetes/ssl/ca.pem -text -noout | egrep -e CN= -e DNS: -e 'Not (Before|After)'
 openssl x509 -in /etc/kubernetes/ssl/apiserver.pem -text -noout | egrep -e CN= -e DNS: -e 'Not (Before|After)'
 openssl x509 -in /etc/kubernetes/ssl/admin.pem -text -noout | egrep -e CN= -e DNS: -e 'Not (Before|After)'
+```
+
+cleanup
+```sh
+kubectl --namespace=kube-system delete svc kubernetes-dashboard
+kubectl --namespace=kube-system delete rc kubernetes-dashboard
+kubectl --namespace=kube-system delete deployment kubernetes-dashboard
+kubectl delete namespace kube-system
 ```

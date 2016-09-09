@@ -33,3 +33,4 @@
     - { role: kubernetes, tags: ['kubernetes','k8s'] }
     - { role: kubectl, tags: ['kubectl'] }
     - { role: skydns, tags: ['skydns','dns'] }
+    - { role: addons, tags: ['addons'] }

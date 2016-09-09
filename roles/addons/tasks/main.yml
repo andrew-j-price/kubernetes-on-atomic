@@ -1,0 +1,37 @@
+---
+
+- name: Create directory structure
+  file:
+    path: '{{ item }}'
+    owner: root
+    group: root
+    state: directory
+    mode: 0755
+  with_items:
+    - '{{ manifests_path }}'
+  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
+
+- name: Copy templates
+  template:
+    src: '{{ item.name }}.j2'
+    dest: '{{ manifests_path }}/{{ item.name }}'
+    owner: root
+    group: root
+    mode: '{{ item.mode }}'
+  with_items:
+    - name: '{{ kube_system_file }}'
+      mode: '0774'
+    - name: '{{ dashboard_yaml }}'
+      mode: '0664'
+    - name: '{{ dashboard_file }}'
+      mode: '0774'
+  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
+
+- name: Run commands
+  command: '{{ item }}'
+  with_items:
+    - '{{ manifests_path }}/{{ kube_system_file }}'
+    - '{{ manifests_path }}/{{ dashboard_file }}'
+  args:
+    chdir: '{{ manifests_path }}'
+  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"

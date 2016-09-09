@@ -1,0 +1,10 @@
+#!/bin/bash
+kubectl get namespace kube-system
+
+if [ $? -eq 0 ]
+then
+    echo "already exists"
+else
+    echo "creating"
+    kubectl create namespace kube-system
+fi
