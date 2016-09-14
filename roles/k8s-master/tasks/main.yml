@@ -1,0 +1,99 @@
+---
+
+- name: Create directory structure
+  file:
+    path: "{{ item }}"
+    owner: root
+    group: root
+    state: directory
+    mode: 0755
+  with_items:
+    - '{{ auth_path }}'
+    - '{{ cert_path }}'
+  run_once: true
+  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
+
+- name: Copy templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    backup: no
+  with_items:
+    - info:
+      src: 'auth-password.csv.j2'
+      dest: '{{ auth_password_file }}'
+      owner: root
+      group: root
+      mode: '0664'
+    - info:
+      src: 'auth-token.csv.j2'
+      dest: '{{ auth_token_file }}'
+      owner: root
+      group: root
+      mode: '0664'
+    - info:
+      src: 'openssl.cnf.j2'
+      dest: '{{ cert_path }}/openssl.cnf'
+      owner: root
+      group: root
+      mode: '0664'
+    - info:
+      src: 'apiserver.j2'
+      dest: '{{ kube_path }}/apiserver'
+      owner: root
+      group: root
+      mode: '0664'
+  notify:
+    - restart kube-apiserver
+    - restart kube-controller-manager
+    - restart kube-scheduler
+  run_once: true
+  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
+
+- name: Create certificates
+  command: "{{ item.command }}"
+  args:
+    chdir: '{{ cert_path }}'
+    creates: '{{ cert_path }}/{{ item.creates }}'
+  with_items:
+    - info:
+      command: 'openssl genrsa -out ca-key.pem 2048'
+      creates: 'ca-key.pem'
+    - info:
+      command: 'openssl req -x509 -new -nodes -key ca-key.pem -days 10000 -out ca.pem -subj "/CN=kube-ca"'
+      creates: 'ca.pem'
+    - info:
+      command: 'openssl genrsa -out apiserver-key.pem 2048'
+      creates: 'apiserver-key.pem'
+    - info:
+      command: 'openssl req -new -key apiserver-key.pem -out apiserver.csr -subj "/CN=kube-apiserver" -config openssl.cnf'
+      creates: 'apiserver.csr'
+    - info:
+      command: 'openssl x509 -req -in apiserver.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out apiserver.pem -days 3650 -extensions v3_req -extfile openssl.cnf'
+      creates: 'apiserver.pem'
+    - info:
+      command: 'openssl genrsa -out admin-key.pem 2048'
+      creates: 'admin-key.pem'
+    - info:
+      command: 'openssl req -new -key admin-key.pem -out admin.csr -subj "/CN=kube-admin"'
+      creates: 'admin.csr'
+    - info:
+      command: 'openssl x509 -req -in admin.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out admin.pem -days 3650'
+      creates: 'admin.pem'
+  run_once: true
+  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
+
+- name: Ensure services are started and enabled on master node
+  service:
+    name: '{{ item }}'
+    enabled: yes
+    state: started
+  with_items:
+    - 'kube-apiserver'
+    - 'kube-controller-manager'
+    - 'kube-scheduler'
+  run_once: true
+  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"

@@ -2,7 +2,8 @@
 
 - name: Set flannel etcd configs
   command: 'etcdctl set /{{ flannel_name }}/network/config ''{ "Network": "{{ flannel_internal_network }}/{{ flannel_network_prefix }}", "SubnetLen": {{ flannel_subnet_length }}, "Backend": { "Type": "vxlan" } }'''
-  when: "'01' in inventory_hostname"
+  run_once: true
+  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
 
 - name: Copy flanneld config file
   template:

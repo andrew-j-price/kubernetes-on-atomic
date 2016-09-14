@@ -5,8 +5,8 @@ docker stop $docker_name
 docker rm $docker_name
 
 docker run -d --name=$docker_name --net=host --restart=always \
--e ETCD_MACHINES="http://{{ k8s_dict.instances[0].name }}:2379,http://{{ k8s_dict.instances[1].name }}:2379,http://{{ k8s_dict.instances[2].name }}:2379" \
--e SKYDNS_DOMAIN="kubernetes.local" \
+-e ETCD_MACHINES="{{ etcd_servers }}" \
+-e SKYDNS_DOMAIN="{{ cluster_domain }}" \
 -e SKYDNS_ADDR="0.0.0.0:53" \
 -e SKYDNS_NAMESERVERS="8.8.8.8:53,8.8.4.4:53" \
 gcr.io/google_containers/skydns:2015-10-13-8c72f8c

@@ -1,8 +1,0 @@
----
-
-manifests_path: '/etc/kubernetes/manifests'
-
-kube_system_file: 'kube-system.sh'
-
-dashboard_file: 'dashboard.sh'
-dashboard_yaml: 'dashboard.yaml'

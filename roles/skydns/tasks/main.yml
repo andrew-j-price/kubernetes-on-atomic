@@ -9,6 +9,7 @@
     mode: 0755
   with_items:
     - '{{ manifests_path }}'
+  run_once: true
   when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
 
 - name: Copy files
@@ -20,6 +21,7 @@
     mode: 0664
   with_items:
     - '{{ busybox_pod_file }}'
+  run_once: true
   when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
 
 - name: Copy templates
@@ -33,6 +35,7 @@
     - '{{ kube2sky_file }}'
     - '{{ skydns_file }}'
     - '{{ busybox_file }}'
+  run_once: true
   when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
 
 - name: Run commands
@@ -43,4 +46,5 @@
     - '{{ manifests_path }}/{{ busybox_file }}'
   args:
     chdir: '{{ manifests_path }}'
+  run_once: true
   when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"

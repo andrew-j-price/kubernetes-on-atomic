@@ -8,23 +8,24 @@
     state: directory
     mode: 0755
   with_items:
-    - '{{ ssl_path }}'
+    - '{{ cert_path }}'
 
 - name: Fetch previously generated certificates
   fetch:
-    src: '{{ ssl_path }}/{{ item }}'
+    src: '{{ cert_path }}/{{ item }}'
     dest: '/tmp/{{ item }}'
     flat: yes
   with_items:
     - 'ca.pem'
     - 'admin-key.pem'
     - 'admin.pem'
+  run_once: true
   when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
 
 - name: Copy certficates
   copy:
     src: '/tmp/{{ item }}'
-    dest: '{{ ssl_path }}/{{ item }}'
+    dest: '{{ cert_path }}/{{ item }}'
     owner: root
     group: root
     mode: 0664
@@ -48,7 +49,7 @@
 - name: Configure kubectl
   command: "{{ item }}"
   with_items:
-    - 'kubectl config set-cluster default-cluster --server=https://{{ k8s_dict.instances[0].name }}'
+    - 'kubectl config set-cluster default-cluster --server={{ master_url }}'
     - 'kubectl config set-credentials default-admin --username={{ kubectl_username }} --password={{ kubectl_password }}'
     - 'kubectl config set-context default-system --cluster=default-cluster --user=default-admin'
     - 'kubectl config use-context default-system'

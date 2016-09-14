@@ -3,3 +3,8 @@
 dns_nameservers:
 - 8.8.8.8
 - 8.8.4.4
+
+kube_path: '/etc/kubernetes'
+auth_path: '/etc/kubernetes/auth'
+cert_path: '/etc/kubernetes/certs'
+manifests_path: '/etc/kubernetes/manifests'

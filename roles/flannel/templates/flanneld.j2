@@ -1,7 +1,7 @@
 # Flanneld configuration options
 
 # etcd url location.  Point this to the server where etcd runs
-FLANNEL_ETCD="http://{{ k8s_dict.instances[0].name }}:2379,http://{{ k8s_dict.instances[1].name }}:2379,http://{{ k8s_dict.instances[2].name }}:2379"
+FLANNEL_ETCD="{{ etcd_servers }}"
 
 # etcd config key.  This is the configuration key that flannel queries
 # For address range assignment

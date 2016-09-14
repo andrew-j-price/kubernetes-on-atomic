@@ -10,7 +10,7 @@
   roles:
     - { role: base, tags: ['base'] }
 
-- name: Deploy base configurations to k8s nodes
+- name: Deploy to k8s nodes
   hosts: k8s
   become: true
   become_user: root
@@ -19,18 +19,9 @@
     - "group_vars/{{ group_name }}.yml"  
   roles:
     - { role: base, tags: ['base'] }
-
-- name: Configure k8s cluster
-  hosts: k8s
-  become: true
-  become_user: root
-  gather_facts: true
-  vars_files:
-    - "group_vars/{{ group_name }}.yml"  
-  roles:
     - { role: etcd, tags: ['etcd'] }
     - { role: flannel, tags: ['flannel'] }
-    - { role: kubernetes, tags: ['kubernetes','k8s'] }
-    - { role: kubectl, tags: ['kubectl'] }
-    - { role: skydns, tags: ['skydns','dns'] }
+    - { role: k8s-master, tags: ['k8s-master','master','k8s'] }
+    - { role: k8s-worker, tags: ['k8s-worker','worker','k8s'] }
+    - { role: kubectl, tags: ['kubectl','k8s'] }
     - { role: addons, tags: ['addons'] }

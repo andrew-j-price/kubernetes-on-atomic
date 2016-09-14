@@ -23,5 +23,17 @@ flannel_subnet_length: 24
 
 internal_iface: 'enp0s8'
 
+master_node: '{{ k8s_dict.instances[0].name }}'
+master_url: 'https://{{ master_node }}:443'
+master_insecure_url: 'http://{{ master_node }}:8080'
+master_insecure_bind: '0.0.0.0'
+
+etcd_servers: 'http://{{ k8s_dict.instances[0].name }}:2379,http://{{ k8s_dict.instances[1].name }}:2379,http://{{ k8s_dict.instances[2].name }}:2379'
+etcd_ip_servers: 'http://{{ k8s_dict.instances[0].ip }}:2379,http://{{ k8s_dict.instances[1].ip }}:2379,http://{{ k8s_dict.instances[2].ip }}:2379'
+
+cluster_dns: '10.254.0.10'
+cluster_domain: 'kubernetes.local'
+cluster_ip_range: '10.254.0.0/16'
+
 kubectl_username: 'admin'
 kubectl_password: 'admin'

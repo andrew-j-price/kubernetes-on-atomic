@@ -9,29 +9,20 @@
     mode: 0755
   with_items:
     - '{{ manifests_path }}'
-  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
+  run_once: true
+  delegate_to: '{{ master_node }}'
 
 - name: Copy templates
   template:
-    src: '{{ item.name }}.j2'
-    dest: '{{ manifests_path }}/{{ item.name }}'
+    src: '{{ item }}.j2'
+    dest: '{{ manifests_path }}/{{ item }}'
     owner: root
     group: root
-    mode: '{{ item.mode }}'
+    mode: 0664
   with_items:
-    - name: '{{ kube_system_file }}'
-      mode: '0774'
-    - name: '{{ dashboard_yaml }}'
-      mode: '0664'
-    - name: '{{ dashboard_file }}'
-      mode: '0774'
-  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
-
-- name: Run commands
-  command: '{{ item }}'
-  with_items:
-    - '{{ manifests_path }}/{{ kube_system_file }}'
-    - '{{ manifests_path }}/{{ dashboard_file }}'
-  args:
-    chdir: '{{ manifests_path }}'
-  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
+    - 'kube-system.yaml'
+    - 'kube-dns.yaml'
+    - 'dashboard.yaml'
+    - 'busybox.yaml'
+  run_once: true
+  delegate_to: '{{ master_node }}'

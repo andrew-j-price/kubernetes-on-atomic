@@ -1,0 +1,51 @@
+---
+
+- name: Create directory structure
+  file:
+    path: "{{ item }}"
+    owner: root
+    group: root
+    state: directory
+    mode: 0755
+  with_items:
+    - '{{ manifests_path }}'
+
+- name: Copy templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    backup: no
+  with_items:
+    - info:
+      src: 'config.j2'
+      dest: '{{ kube_path }}/config'
+      owner: root
+      group: root
+      mode: '0644'
+    - info:
+      src: 'kubelet.j2'
+      dest: '{{ kube_path }}/kubelet'
+      owner: root
+      group: root
+      mode: '0644'
+    - info:
+      src: 'proxy.j2'
+      dest: '{{ kube_path }}/proxy'
+      owner: root
+      group: root
+      mode: '0644'
+  notify:
+    - restart kubelet
+    - restart kube-proxy
+
+- name: Ensure services are started and enabled
+  service:
+    name: '{{ item }}'
+    enabled: yes
+    state: started
+  with_items:
+    - 'kubelet'
+    - 'kube-proxy'

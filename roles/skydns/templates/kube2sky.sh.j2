@@ -6,5 +6,5 @@ docker rm $docker_name
 
 docker run -d --name=$docker_name --net=host --restart=always \
 gcr.io/google_containers/kube2sky:1.12 \
--v=10 -logtostderr=true -domain=kubernetes.local \
+-v=10 -logtostderr=true -domain={{ cluster_domain }}\
 -etcd-server="http://127.0.0.1:2379"
