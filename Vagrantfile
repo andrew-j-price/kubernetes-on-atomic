@@ -11,6 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   servers.each do |servers|
     config.vm.define servers["name"] do |srv|
       srv.vm.box = servers["box"]
+      srv.vm.box_version = "<=7.20160730"
       srv.vm.hostname = servers["name"]
       srv.vm.network "private_network", ip: servers["ip"], :adapter => 2
       srv.vm.provider :virtualbox do |vb|

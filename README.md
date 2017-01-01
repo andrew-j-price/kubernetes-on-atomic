@@ -1,4 +1,4 @@
-# atomic-fun
+# kubernetes-on-atomic
 I made this repo for me, but if you happen to stumble across it then please enjoy!
 
 
@@ -66,7 +66,7 @@ dashboard:
 ```sh
 https://atomic01/ui
 kubectl --namespace=kube-system get pods -o wide
-kubectl --namespace=kube-system logs 
+kubectl --namespace=kube-system logs
 kubectl --namespace=kube-system get svc kubernetes-dashboard
 kubectl --namespace=kube-system get rc kubernetes-dashboard
 docker run --net=host --rm -it gcr.io/google_containers/kubernetes-dashboard-amd64:v1.4.0-beta2 --apiserver-host http://localhost:8080
@@ -78,10 +78,15 @@ kube-dns / skydns:
 kubectl exec busybox -- nslookup kubernetes
 kubectl exec -it busybox /bin/sh
 kubectl --namespace=kube-system get pods -o wide
-kubectl --namespace=kube-system logs 
+kubectl --namespace=kube-system logs
 docker logs skydns
 docker logs kube2sky
 docker search gcr.io/google-containers/kube
+```
+
+addons:
+```sh
+for i in `ls /etc/kubernetes/manifests/`; do kubectl create -f "/etc/kubernetes/manifests/$i"; done
 ```
 
 ssl:

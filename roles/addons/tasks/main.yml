@@ -10,7 +10,7 @@
   with_items:
     - '{{ manifests_path }}'
   run_once: true
-  delegate_to: '{{ master_node }}'
+  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
 
 - name: Copy templates
   template:
@@ -24,5 +24,13 @@
     - 'kube-dns.yaml'
     - 'dashboard.yaml'
     - 'busybox.yaml'
+  register: addons_copied
   run_once: true
-  delegate_to: '{{ master_node }}'
+  when: "'{{ k8s_dict.instances[0].name }}' == inventory_hostname"
+
+- name: Deploy addons via kubectl
+  script: deploy-addons.sh
+  run_once: true
+  ignore_errors: true
+  when: ('{{ k8s_dict.instances[0].name }}' == inventory_hostname) and
+        (addons_copied.changed)
